@@ -1,0 +1,92 @@
+#include <string.h>
+#include "TFile.h"
+#include "TH1.h"
+#include "Riostream.h"
+#include "TPaveStats.h"
+#include <cstdlib> 
+#include <fstream>
+#include <iostream>
+#include <iomanip.h>   
+
+gROOT->Reset();
+
+Int_t Diff_EBEE_weekly() {
+  gStyle->SetOptStat(0);
+  // The new one
+  TFile* fin = new TFile("./TranspVar_EBEE_weekly_47.root");
+  fin->cd(); 
+ 
+  TProfile** hEBEERing = new TProfile*[2];
+
+  hEBEERing[0] = (TProfile*)RingSide_0;
+  hEBEERing[1] = (TProfile*)RingSide_1;
+
+  TCanvas cCan("cCan", "Transparency variation");
+  //  cCan.Divide(3,2);
+  cCan.Divide(1,2);
+  //  cCan.SetCanvasSize(630,885);
+      
+  double x[2][28];
+  for (Int_t side = 0; side < 2; side++) {
+    double min = 1.;
+    for (Int_t ring = 0; ring < 28; ring++) {
+      //    for(int bin = 0; bin < 8000; bin++) {
+      x[side][ring] = hEBEERing[side]->GetBinContent(ring + 1);
+      if(x > 0.) {
+	double err = hEBEERing[side]->GetBinError(ring + 1);
+	double val = x - err;
+	if(val < min) min = val;
+      }
+    }
+  }
+  cCan.cd(1);
+  hEBEERing[0]->Draw("");
+  cCan.cd(2);
+  hEBEERing[1]->Draw("");
+  cCan.Print("TranspVar_EBEE_week_47.gif");  // print canvas to gif file
+
+  hEBEERing[0]->Delete();
+  hEBEERing[1]->Delete();
+  fin->Close();
+
+  // The old one
+  fin = new TFile("./TranspVar_EBEE_weekly_46.root");
+  fin->cd(); 
+  hEBEERing[0] = (TProfile*)RingSide_0;
+  hEBEERing[1] = (TProfile*)RingSide_1;
+  TProfile** hEBEEDiffSide = new TProfile*[2];
+  for (int side = 0; side < 2; side++) {
+    string EBEE = "EBEE-";
+    if(side == 1) EBEE = "EBEE+";
+    hEBEEDiffSide[side] = new TProfile(Form("EBEEDiffSide_%i",side),Form("Difference %s",EBEE.c_str()),28, 0., 28.);
+
+    for (Int_t ring = 0; ring < 28; ring++) {
+	double xold = hEBEERing[side]->GetBinContent(ring + 1);
+	double diff =  x[side][ring] - xold;
+	cout << " side " << side << " ring " << ring << " val " << xold << " diff " << diff << endl;
+	hEBEEDiffSide[side]->Fill(ring, diff);
+    }
+  }
+  //    double min = 1.;
+  TCanvas cCanDiff("cCanDiff", "Transparency difference");
+  //  cCan.Divide(3,2);
+  cCanDiff.Divide(1,2);
+  for (Int_t side = 0; side < 2; side++) {
+    //   int imin = min * 100;
+    //    min = imin / 100.;
+    //    hEBEERing[side]->SetMinimum(min);
+    //    cout << " Ring " << ring << " Minimal value " << min << endl;
+    cCanDiff.cd(side + 1);
+    hEBEEDiffSide[side]->Draw("P");
+    hEBEEDiffSide[side]->SetMarkerStyle(20);
+    hEBEEDiffSide[side]->SetMarkerSize(0.5);
+    hEBEEDiffSide[side]->SetMarkerColor(kRed);
+    //    hEBEEDiffSide[side]->SetLineColor(kRed);
+  }  //  loop over sides
+
+  cCanDiff.Print("TranspVar_EBEE_Diff_47_46.gif");  // print canvas to gif file
+  cCanDiff.Clear();
+  cout << " Well done!!!" << endl;
+  
+  return 0;
+}

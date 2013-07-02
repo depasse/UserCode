@@ -1,0 +1,58 @@
+<use   name="CondCore/Utilities"/>
+<bin   file="TranspVar_EBEE_mc.cpp" name="TranspVar_EBEE_mc">
+  <use   name="CondFormats/EcalObjects"/>
+  <use   name="CalibCalorimetry/EcalLaserAnalyzer"/>
+  <use   name="OnlineDB/EcalCondDB"/>
+  <use   name="OnlineDB/Oracle"/>
+  <use   name="rootgraphics"/>
+  <use   name="rootcore"/>
+</bin>
+<bin   file="TranspVar_EBEE_weekly.cpp" name="TranspVar_EBEE_weekly">
+  <use   name="CondFormats/EcalObjects"/>
+  <use   name="CalibCalorimetry/EcalLaserAnalyzer"/>
+  <use   name="OnlineDB/EcalCondDB"/>
+  <use   name="OnlineDB/Oracle"/>
+  <use   name="rootgraphics"/>
+  <use   name="rootcore"/>
+</bin>
+<bin   file="TranspVar_EBEE_summary.cpp" name="TranspVar_EBEE_summary">
+  <use   name="CondFormats/EcalObjects"/>
+  <use   name="CalibCalorimetry/EcalLaserAnalyzer"/>
+  <use   name="OnlineDB/EcalCondDB"/>
+  <use   name="OnlineDB/Oracle"/>
+  <use   name="rootgraphics"/>
+  <use   name="rootcore"/>
+</bin>
+<bin   file="TranspVar_EE_mc.cpp" name="TranspVar_EE_mc">
+  <use   name="CondFormats/EcalObjects"/>
+  <use   name="CalibCalorimetry/EcalLaserAnalyzer"/>
+  <use   name="OnlineDB/EcalCondDB"/>
+  <use   name="OnlineDB/Oracle"/>
+  <use   name="rootgraphics"/>
+  <use   name="rootcore"/>
+</bin>
+<bin   file="TranspVar_EE_weekly.cpp" name="TranspVar_EE_weekly">
+  <use   name="CondFormats/EcalObjects"/>
+  <use   name="CalibCalorimetry/EcalLaserAnalyzer"/>
+  <use   name="OnlineDB/EcalCondDB"/>
+  <use   name="OnlineDB/Oracle"/>
+  <use   name="rootgraphics"/>
+  <use   name="rootcore"/>
+</bin>
+<bin   file="TranspVar_EE_summary.cpp" name="TranspVar_EE_summary">
+  <use   name="CondFormats/EcalObjects"/>
+  <use   name="CalibCalorimetry/EcalLaserAnalyzer"/>
+  <use   name="OnlineDB/EcalCondDB"/>
+  <use   name="OnlineDB/Oracle"/>
+  <use   name="rootgraphics"/>
+  <use   name="rootcore"/>
+</bin>
+<bin   file="convert_timestamp.cpp" name="convert_timestamp">
+  <use   name="CondFormats/EcalObjects"/>
+  <use   name="CalibCalorimetry/EcalLaserAnalyzer"/>
+  <use   name="OnlineDB/EcalCondDB"/>
+  <use   name="OnlineDB/Oracle"/>
+  <use   name="rootgraphics"/>
+  <use   name="rootcore"/>
+</bin>
+
