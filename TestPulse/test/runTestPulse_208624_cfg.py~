@@ -1,0 +1,95 @@
+import FWCore.ParameterSet.Config as cms
+
+process = cms.Process("Noise")
+
+process.MessageLogger = cms.Service("MessageLogger",
+#  cout = cms.untracked.PSet(
+#    threshold = cms.untracked.string('INFO')
+#  ),
+#  destinations = cms.untracked.vstring('cout')
+  suppressInfo = cms.untracked.vstring('ecalEBunpacker'),
+  destinations = cms.untracked.vstring('messages.txt'),
+)
+
+
+#######################################################################################
+# input
+process.source = cms.Source("PoolSource",
+  skipEvents = cms.untracked.uint32(0),
+  fileNames = cms.untracked.vstring(
+  'file:/afs/cern.ch/work/d/depasse/data/ecal_local.00208624.0000.TEST_PULSE-MGPA.root'   
+#     'file:/tmp/fay/ecal_local.00208214.0000.TEST_PULSE-MGPA.root'
+#     'rfio:/castor/cern.ch/cms/store/streamer/PrivEcal501/A/000/204/292/ecal_local.00204292.0000.TEST_PULSE-MGPA.root'
+  )
+)
+process.maxEvents = cms.untracked.PSet(
+    input = cms.untracked.int32(-1)
+)
+process.source.duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
+#######################################################################################
+ 
+process.load("Configuration.StandardSequences.MagneticField_cff")
+process.load("Configuration.Geometry.GeometryIdeal_cff")
+
+process.load("EventFilter.EcalRawToDigi.EcalUnpackerMapping_cfi")
+process.load("EventFilter.EcalRawToDigi.EcalUnpackerData_cfi")
+process.load("Geometry.CaloEventSetup.CaloTopology_cfi")
+process.load("Geometry.CaloEventSetup.CaloGeometry_cff")
+process.load("Geometry.EcalCommonData.EcalOnly_cfi")
+process.load("Geometry.EcalMapping.EcalMapping_cfi")
+process.load("Geometry.EcalMapping.EcalMappingRecord_cfi")
+
+# Conditions (Global Tag is used here):
+process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
+process.GlobalTag.globaltag = 'GR_P_V43::All'
+
+process.load("CalibCalorimetry.EcalLaserCorrection.ecalLaserCorrectionService_cfi")
+process.load("Configuration.StandardSequences.RawToDigi_Data_cff")
+process.load("Configuration.StandardSequences.Reconstruction_cff")
+process.load("RecoLocalCalo.Configuration.ecalLocalRecoSequence_cff")
+process.load("RecoLocalCalo.EcalRecProducers.ecalDetIdToBeRecovered_cfi")
+
+
+process.ecalDccDigis = cms.EDProducer("EcalDccDigiSkimer",
+   EEdigiCollectionOut = cms.string('eeDigiSkim'),
+   EEdigiCollection = cms.InputTag("ecalDigis","eeDigis"),
+   EBdigiCollectionOut = cms.string('ebDigiSkim'),
+   EBdigiCollection = cms.InputTag("ecalDigis","ebDigis"),
+   DigiUnpacker = cms.InputTag("ecalDigis"),
+   DigiType = cms.string('Physics')
+)
+
+process.load("RecoLocalCalo.EcalRecProducers.ecalDetIdToBeRecovered_cfi")
+
+process.TestPulse = cms.EDAnalyzer("TestPulse",
+  digiProducer   =  cms.string("ecalDigis"),
+  EBdigiCollection = cms.string("ebDigis"),
+  EEdigiCollection = cms.string("eeDigis"),
+
+  digiCollection = cms.string("ecalDigis"),
+
+  eventHeaderProducer   = cms.string("ecalDigis"),
+  eventHeaderCollection = cms.string(""),
+
+  runnumber  = cms.untracked.int32(208624),
+  ECALType = cms.string("EA"),
+  runType = cms.string("TEST_PULSE"),
+#  runType = cms.string("Pedes"),
+  startevent  = cms.untracked.uint32(1),
+  xtalnumber  = cms.untracked.int32(0),
+  doPedes = cms.bool(False),
+  doWeights = cms.bool(False),
+  useWeights = cms.bool(False),
+  LogFile = cms.untracked.bool(True),
+  SaveProfiles = cms.untracked.bool(True),
+  GainForWeights = cms.untracked.int32(0),
+                                   
+  maskedChannels = cms.untracked.vint32(22420, 25979)
+ 
+  )
+
+process.p = cms.Path(
+   process.ecalDigis*
+   process.ecalLocalRecoSequence*
+   process.TestPulse
+)

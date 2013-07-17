@@ -1,0 +1,12 @@
+# csh
+foreach i (LSFJOB_*)
+  cd $i
+  grep 'runTestPulse.sh' LSFJOB | awk '{print $3}' > run
+  sed s/\'// run >! run2
+  awk '{print "mv STDOUT ../run_" $1 ".out"}' run2 > run3
+  chmod 700 run3
+  ./run3
+  rm -f run*
+  cd ..
+  rm -rf $i
+end
